@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Vision Detect Game - 5 Levels Final</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- GAYA VISUAL --- */
+        body { margin: 0; background-color: #2FA4E7; font-family: 'Nunito', sans-serif; height: 100vh; overflow: hidden; user-select: none; touch-action: none; }
+        
+        /* --- SCREEN: START & WIN (OVERLAY) --- */
+        .start-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #2FA4E7;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.5s;
+        }
+        
+        .game-title {
+            font-size: 70px; color: white; 
+            text-shadow: 4px 4px 0px #1565C0;
+            margin-bottom: 30px;
+            animation: bounceTitle 2s infinite;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .btn-style {
+            background-color: #FDD835;
+            color: #333;
+            font-size: 35px; font-weight: 900;
+            padding: 15px 50px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #F9A825;
+            transition: transform 0.1s, box-shadow 0.1s;
+            margin-top: 20px;
+        }
+        
+        .btn-style:active {
+            transform: translateY(10px);
+            box-shadow: 0 0 0 #F9A825;
+        }
+
+        @keyframes bounceTitle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* --- CONTAINER UTAMA GAME --- */
+        #game-container {
+            display: none; 
+            width: 100%; height: 100%;
+            flex-direction: row; 
+        }
+
+        /* --- CSS ASAL GAME --- */
+        .header-bar { position: absolute; top: 0; left: 0; background-color: #333; width: 100%; height: 50px; display: flex; align-items: center; justify-content: space-between; z-index: 10; padding-right: 20px; box-sizing: border-box; }
+        .yellow-tab { background-color: #FDD835; height: 100%; padding: 0 20px; display: flex; align-items: center; font-size: 18px; color: #333; font-weight: bold; border-bottom-right-radius: 20px; }
+        
+        .level-badge { color: white; font-size: 20px; font-weight: bold; background: #555; padding: 5px 15px; border-radius: 15px; }
+
+        .left-panel { flex: 65; background-color: #2FA4E7; display: flex; align-items: center; justify-content: center; position: relative; border-right: 4px solid #1565C0; }
+        .fruit-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 85%; margin-top: 50px; }
+        .fruit { font-size: 80px; cursor: pointer; transition: transform 0.1s; filter: drop-shadow(2px 4px 0px rgba(0,0,0,0.1)); }
+        .fruit:active { transform: scale(0.9); }
+        .eaten { opacity: 0.5; filter: grayscale(100%); transform: scale(0.9); }
+
+        .right-panel { flex: 35; background-color: #FFFFFF; display: flex; flex-direction: column; }
+        .top-section { padding: 10px; padding-top: 60px; }
+        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; border: 2px solid #B3E5FC; padding: 5px; border-radius: 10px; }
+        .num-block { aspect-ratio: 1; background-color: white; color: #1976D2; font-size: 30px; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid #E1F5FE; border-radius: 5px; cursor: pointer; }
+        .num-block:active { background-color: #BBDEFB; }
+
+        .mid-toolbar { display: flex; padding: 5px 15px; justify-content: flex-end; gap: 10px; }
+        .icon-btn { border: 2px solid #E1F5FE; border-radius: 8px; width: 40px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; }
+
+        .bottom-section { flex: 1; background-color: #1976D2; position: relative; overflow: hidden; border-top: 4px solid #1565C0; cursor: crosshair; }
+        canvas { display: block; width: 100%; height: 100%; touch-action: none; position: absolute; z-index: 2; }
+        
+        .instruction-text { position: absolute; top: 40%; width: 100%; text-align: center; color: rgba(255,255,255,0.5); font-size: 18px; pointer-events: none; z-index: 1; }
+        .status-msg { position: absolute; bottom: 25px; left: 0; width: 100%; text-align: center; color: #FFF; font-weight: bold; pointer-events: none; text-shadow: 1px 1px 2px black; z-index: 3; font-size: 20px; }
+        .debug-msg { position: absolute; bottom: 5px; right: 5px; color: rgba(255,255,255,0.4); font-size: 12px; z-index: 3; pointer-events: none; }
+
+        /* BINTANG TENGAH */
+        .star-popup { 
+            position: fixed; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%) scale(0); 
+            z-index: 9999; 
+            pointer-events: none; 
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .star-show { transform: translate(-50%, -50%) scale(1); }
+        .star-shape { font-size: 250px; color: #FFD600; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); }
+        
+        .wrong-flash { animation: shake 0.5s; border: 5px solid red !important; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
+    </style>
+</head>
+<body>
+
+    <div class="start-overlay" id="start-screen">
+        <div class="game-title">Jom Kira<br>Buah! 🍎</div>
+        <button class="btn-style" onclick="startGameSession()">MULA</button>
+    </div>
+
+    <div id="game-container">
+        <div class="header-bar">
+            <div class="yellow-tab">Counting Game ⭐</div>
+            <div class="level-badge" id="level-indicator">Level 1 / 5</div>
+        </div>
+
+        <div class="left-panel">
+            <div class="fruit-grid" id="fruit-area"></div>
+        </div>
+
+        <div class="right-panel" id="right-panel">
+            <div class="top-section">
+                <div class="num-grid">
+                    <div class="num-block" onclick="checkAnswer(0)">0</div>
+                    <div class="num-block" onclick="checkAnswer(1)">1</div>
+                    <div class="num-block" onclick="checkAnswer(2)">2</div>
+                    <div class="num-block" onclick="checkAnswer(3)">3</div>
+                    <div class="num-block" onclick="checkAnswer(4)">4</div>
+                    <div class="num-block" onclick="checkAnswer(5)">5</div>
+                    <div class="num-block" onclick="checkAnswer(6)">6</div>
+                    <div class="num-block" onclick="checkAnswer(7)">7</div>
+                    <div class="num-block" onclick="checkAnswer(8)">8</div>
+                    <div class="num-block" onclick="checkAnswer(9)">9</div>
+                </div>
+            </div>
+
+            <div class="mid-toolbar"><div class="icon-btn" onclick="clearCanvas()">🗑️</div></div>
+
+            <div class="bottom-section" id="canvas-container">
+                <div class="instruction-text" id="hint">Write here...</div>
+                <canvas id="writeCanvas"></canvas>
+                <div class="status-msg" id="status"></div>
+                <div class="debug-msg" id="debug"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="start-overlay" id="win-screen" style="display: none; opacity: 0;">
+        <div class="game-title" style="font-size: 60px;">TAHNIAH!<br>🎉🎉🎉<br>Tamat 5 Level</div>
+        <button class="btn-style" onclick="goHome()">MENU UTAMA</button>
+    </div>
+
+    <div class="star-popup" id="win-star"><div class="star-shape">⭐</div></div>
+
+    <script>
+        const fruitsData = ['🍎', '🍊', '🍌', '🍓', '🍇', '🍉'];
+        let correctNum = 0;
+        let isLocked = false;
+        let countedFruits = 0;
+        
+        let currentLevel = 1;
+        const maxLevels = 5;
+
+        // --- GAME FLOW CONTROL ---
+
+        function startGameSession() {
+            currentLevel = 1;
+            updateLevelDisplay();
+
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('win-screen').style.display = 'none';
+            document.getElementById('win-screen').style.opacity = '0';
+            
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.style.display = 'flex';
+            
+            resizeCanvas(); 
+            initGame();
+            
+            speak("Let's Play!");
+        }
+
+        function goHome() {
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('win-screen').style.display = 'none';
+            document.getElementById('win-star').classList.remove('star-show'); // Pastikan bintang hilang
+            
+            const startScreen = document.getElementById('start-screen');
+            startScreen.style.display = 'flex';
+            startScreen.style.opacity = '1';
+        }
+
+        function showWinScreen() {
+            // FIX: Padamkan bintang apabila screen tahniah muncul
+            document.getElementById('win-star').classList.remove('star-show');
+            
+            speak("Congratulations! You did it!");
+            document.getElementById('game-container').style.display = 'none';
+            
+            const winScreen = document.getElementById('win-screen');
+            winScreen.style.display = 'flex';
+            setTimeout(() => { winScreen.style.opacity = '1'; }, 50);
+        }
+
+        function updateLevelDisplay() {
+            document.getElementById('level-indicator').innerText = `Level ${currentLevel} / ${maxLevels}`;
+        }
+
+        // --- SISTEM SUARA (TEXT TO SPEECH) ---
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                const msg = new SpeechSynthesisUtterance(text.toString());
+                msg.lang = 'en-US'; 
+                msg.rate = 0.9;     
+                msg.pitch = 1.1;    
+                msg.volume = 1;
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        // --- ENGINE SETUP ---
+        const canvas = document.getElementById('writeCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const container = document.getElementById('canvas-container');
+        let isDrawing = false;
+        let timer = null;
+        let hasWritten = false;
+
+        function resizeCanvas() {
+            if(container.offsetWidth > 0) {
+                canvas.width = container.offsetWidth;
+                canvas.height = container.offsetHeight;
+                setupPen();
+            }
+        }
+        function setupPen() {
+            ctx.lineWidth = 18; 
+            ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#FFFFFF';
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            let cx = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+            let cy = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+            return { x: cx - rect.left, y: cy - rect.top };
+        }
+
+        function startDraw(e) {
+            if(isLocked) return;
+            if(e.type !== 'mousedown') e.preventDefault();
+            clearTimeout(timer);
+            document.getElementById('hint').style.opacity = '0';
+            document.getElementById('status').innerText = "";
+            isDrawing = true; hasWritten = true;
+            const pos = getPos(e);
+            ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if(!isDrawing) return;
+            if(e.type !== 'mousemove') e.preventDefault();
+            const pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y); ctx.stroke();
+        }
+
+        function endDraw(e) {
+            if(!isDrawing) return;
+            if(e.type !== 'mouseup') e.preventDefault();
+            isDrawing = false;
+            timer = setTimeout(recognizeGrid, 1000);
+        }
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', endDraw);
+        canvas.addEventListener('touchstart', startDraw, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchend', endDraw, { passive: false });
+
+        // --- ENJIN VISION ---
+        const patterns = {
+            '0': [1,1,1, 1,0,1, 1,1,1],
+            '1': [0,1,0, 0,1,0, 0,1,0],
+            '2': [1,1,1, 0,1,1, 1,1,1],
+            '3': [1,1,1, 0,1,1, 1,1,1],
+            '4': [1,0,1, 1,1,1, 0,0,1],
+            '5': [1,1,1, 1,1,0, 1,1,1],
+            '6': [1,0,0, 1,1,1, 1,1,1],
+            '7': [1,1,1, 0,0,1, 0,0,1],
+            '8': [1,1,1, 1,1,1, 1,1,1],
+            '9': [1,1,1, 1,1,1, 0,0,1]
+        };
+
+        function recognizeGrid() {
+            if(!hasWritten) return;
+            const w = canvas.width, h = canvas.height;
+            const imgData = ctx.getImageData(0,0,w,h).data;
+            let minX=w, maxX=0, minY=h, maxY=0;
+            let found = false;
+
+            for(let y=0; y<h; y+=5) {
+                for(let x=0; x<w; x+=5) {
+                    const i = (y*w + x) * 4;
+                    if(imgData[i+3] > 0) {
+                        if(x<minX) minX=x; if(x>maxX) maxX=x;
+                        if(y<minY) minY=y; if(y>maxY) maxY=y;
+                        found = true;
+                    }
+                }
+            }
+
+            if(!found || (maxX-minX < 20)) { 
+                document.getElementById('status').innerText = "?"; return; 
+            }
+
+            const pad = 10;
+            minX = Math.max(0, minX-pad); minY = Math.max(0, minY-pad);
+            maxX = Math.min(w, maxX+pad); maxY = Math.min(h, maxY+pad);
+            const bw = maxX - minX; const bh = maxY - minY;
+            const cellW = bw/3; const cellH = bh/3;
+            let grid = [0,0,0, 0,0,0, 0,0,0];
+
+            for(let r=0; r<3; r++) {
+                for(let c=0; c<3; c++) {
+                    let hits = 0;
+                    const samples = 20;
+                    for(let k=0; k<samples; k++) {
+                        const sx = Math.floor(minX + c*cellW + Math.random()*cellW);
+                        const sy = Math.floor(minY + r*cellH + Math.random()*cellH);
+                        const idx = (sy*w + sx) * 4;
+                        if(imgData[idx+3] > 50) hits++;
+                    }
+                    if(hits > (samples * 0.15)) grid[r*3+c] = 1;
+                }
+            }
+
+            let bestNum = -1;
+            let maxScore = -1;
+
+            for(let n=0; n<=9; n++) {
+                let score = 0;
+                let pat = patterns[n.toString()];
+                if(n===1) {
+                    if(grid[1] && grid[4] && grid[7] && !grid[0] && !grid[2]) score = 10;
+                } else if(n===0) {
+                    if(!grid[4] && grid[0] && grid[8]) score = 10;
+                } else {
+                    for(let i=0; i<9; i++) if(grid[i] === pat[i]) score++;
+                }
+                if(score > maxScore) { maxScore = score; bestNum = n; }
+            }
+            
+            document.getElementById('debug').innerText = "I see: " + bestNum;
+
+            if(bestNum === correctNum) {
+                checkAnswer(correctNum);
+            } else {
+                triggerWrong();
+            }
+        }
+
+        // --- GAMEPLAY ---
+        function initGame() {
+            isLocked = false;
+            countedFruits = 0;
+            document.getElementById('win-star').classList.remove('star-show');
+            document.getElementById('right-panel').classList.remove('wrong-flash');
+            clearCanvas();
+            updateLevelDisplay();
+            
+            correctNum = Math.floor(Math.random() * 9) + 1;
+            let fruitType = fruitsData[Math.floor(Math.random() * fruitsData.length)];
+            let container = document.getElementById('fruit-area');
+            container.innerHTML = '';
+            for(let i=0; i<correctNum; i++) {
+                let f = document.createElement('div');
+                f.className = 'fruit';
+                f.textContent = fruitType;
+                f.onclick = function() {
+                    if(this.classList.contains('eaten')) return;
+                    this.classList.add('eaten');
+                    countedFruits++;
+                    speak(countedFruits);
+                };
+                container.appendChild(f);
+            }
+        }
+
+        function checkAnswer(num) {
+            if(isLocked) return;
+            if(num === correctNum) {
+                isLocked = true;
+                speak("Good Job!"); 
+                document.getElementById('win-star').classList.add('star-show');
+                document.getElementById('status').innerText = "CORRECT!";
+                
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                ctx.font = "bold 150px Nunito"; ctx.fillStyle = "white"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText(num, canvas.width/2, canvas.height/2);
+                
+                setTimeout(() => {
+                    if(currentLevel >= maxLevels) {
+                        showWinScreen();
+                    } else {
+                        currentLevel++;
+                        initGame();
+                    }
+                }, 3000); 
+            } else {
+                triggerWrong();
+            }
+        }
+
+        function triggerWrong() {
+            speak("Try Again");
+            document.getElementById('status').innerText = "WRONG!";
+            const panel = document.getElementById('right-panel');
+            panel.classList.add('wrong-flash');
+            setTimeout(() => {
+                panel.classList.remove('wrong-flash');
+                document.getElementById('status').innerText = "";
+                if(!isDrawing) clearCanvas();
+            }, 800);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            document.getElementById('hint').style.opacity = '1';
+            document.getElementById('status').innerText = "";
+            document.getElementById('debug').innerText = "";
+            hasWritten = false;
+        }
+
+    </script>
+</body>
+</html>
