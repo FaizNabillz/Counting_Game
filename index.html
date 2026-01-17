@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jom Kira Buah - Responsive</title>
+    <title>Jom Kira Buah - Pink Edition (2 Levels)</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <style>
         /* --- ASAS & RESET --- */
-        body { margin: 0; background-color: #2FA4E7; font-family: 'Nunito', sans-serif; height: 100vh; overflow: hidden; user-select: none; touch-action: none; }
+        body { margin: 0; background-color: #F48FB1; font-family: 'Nunito', sans-serif; height: 100vh; overflow: hidden; user-select: none; touch-action: none; }
         
         /* --- START & WIN SCREEN (Overlay) --- */
         .overlay-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #2FA4E7;
+            background-color: #F48FB1;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 2000;
             transition: opacity 0.5s;
@@ -20,21 +20,30 @@
         }
         
         .game-title {
-            font-size: clamp(40px, 8vw, 80px); /* Responsif font size */
+            font-size: clamp(40px, 8vw, 80px);
             color: white; 
-            text-shadow: 4px 4px 0px #1565C0;
+            text-shadow: 4px 4px 0px #C2185B; 
             margin-bottom: 30px;
             animation: bounceTitle 2s infinite;
             text-align: center;
             line-height: 1.1;
         }
 
+        /* Container untuk butang menu */
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
         .btn-style {
             background-color: #FDD835;
             color: #333;
-            font-size: clamp(20px, 5vw, 35px);
+            font-size: clamp(20px, 5vw, 30px);
             font-weight: 900;
-            padding: 15px 50px;
+            padding: 15px 30px;
+            width: 280px;
             border-radius: 50px;
             border: none;
             cursor: pointer;
@@ -42,6 +51,13 @@
             transition: transform 0.1s;
         }
         .btn-style:active { transform: translateY(8px); box-shadow: none; }
+
+        /* Style Khas untuk butang Hard */
+        .btn-hard {
+            background-color: #C2185B;
+            color: white;
+            box-shadow: 0 8px 0 #880E4F;
+        }
         
         @keyframes bounceTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
@@ -49,7 +65,6 @@
         #game-container {
             display: none; 
             width: 100%; height: 100%;
-            /* Default: Landscape (Desktop/Tablet) */
             flex-direction: row; 
         }
 
@@ -57,7 +72,7 @@
         .header-bar { 
             position: absolute; top: 0; left: 0; width: 100%; height: 50px; 
             display: flex; align-items: center; justify-content: space-between; 
-            z-index: 10; pointer-events: none; /* Biar klik tembus ke bawah jika perlu */
+            z-index: 10; pointer-events: none;
         }
         .yellow-tab { 
             background-color: #FDD835; height: 100%; padding: 0 20px; 
@@ -73,19 +88,19 @@
 
         /* --- PANEL KIRI (BUAH) --- */
         .left-panel { 
-            flex: 65; /* 65% Lebar di Desktop */
-            background-color: #2FA4E7; 
+            flex: 65;
+            background-color: #F48FB1; 
             display: flex; align-items: center; justify-content: center; 
             position: relative; 
-            border-right: 4px solid #1565C0; 
+            border-right: 4px solid #C2185B; 
         }
         .fruit-grid { 
             display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
             gap: 10px; width: 90%; height: 80%;
-            overflow-y: auto; /* Scroll jika terlalu banyak buah di skrin kecil */
+            overflow-y: auto;
         }
         .fruit { 
-            font-size: clamp(40px, 8vw, 90px); /* Buah membesar/mengecil ikut skrin */
+            font-size: clamp(40px, 8vw, 90px);
             cursor: pointer; transition: transform 0.1s; 
             filter: drop-shadow(2px 4px 0px rgba(0,0,0,0.1)); 
             user-select: none; -webkit-tap-highlight-color: transparent;
@@ -95,7 +110,7 @@
 
         /* --- PANEL KANAN (TULIS & NOMBOR) --- */
         .right-panel { 
-            flex: 35; /* 35% Lebar di Desktop */
+            flex: 35;
             background-color: #FFFFFF; 
             display: flex; flex-direction: column; 
         }
@@ -122,9 +137,9 @@
         }
 
         .bottom-section { 
-            flex: 1; /* Ambil baki ruang yang ada */
-            background-color: #1976D2; position: relative; 
-            overflow: hidden; border-top: 4px solid #1565C0; cursor: crosshair; 
+            flex: 1;
+            background-color: #C2185B; position: relative; 
+            overflow: hidden; border-top: 4px solid #C2185B; cursor: crosshair; 
         }
         canvas { display: block; width: 100%; height: 100%; touch-action: none; position: absolute; z-index: 2; }
         
@@ -153,25 +168,23 @@
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
 
         /* --- MEDIA QUERIES (RESPONSIVE RULES) --- */
-        
-        /* Untuk Phone (Portrait) atau Skrin Sempit (< 768px) */
         @media (max-width: 768px) or (orientation: portrait) {
-            #game-container { flex-direction: column; } /* Susun Atas-Bawah */
+            #game-container { flex-direction: column; }
             
             .left-panel { 
                 flex: none; height: 45%; width: 100%; 
-                border-right: none; border-bottom: 4px solid #1565C0; 
+                border-right: none; 
+                border-bottom: 4px solid #C2185B; 
             }
-            .fruit-grid { margin-top: 50px; } /* Ruang untuk header bar */
+            .fruit-grid { margin-top: 50px; }
             
-            .right-panel { flex: 1; width: 100%; } /* Ambil baki ruang bawah */
+            .right-panel { flex: 1; width: 100%; }
             
-            .top-section { padding-top: 5px; padding-bottom: 5px; } /* Jimat ruang */
-            .num-block { height: 40px; font-size: 20px; } /* Butang kecil sikit di mobile */
+            .top-section { padding-top: 5px; padding-bottom: 5px; }
+            .num-block { height: 40px; font-size: 20px; }
             
-            .mid-toolbar { display: none; } /* Sorok butang tong sampah di mobile untuk jimat ruang, user boleh lukis atas */
+            .mid-toolbar { display: none; }
             
-            /* Pada mobile, kita tambah butang clear kecil terapung dalam canvas */
             .mobile-clear-btn {
                 display: block !important;
                 position: absolute; top: 10px; right: 10px; 
@@ -181,7 +194,7 @@
             }
         }
 
-        .mobile-clear-btn { display: none; } /* Default hidden di desktop */
+        .mobile-clear-btn { display: none; }
 
     </style>
 </head>
@@ -189,13 +202,17 @@
 
     <div class="overlay-screen" id="start-screen">
         <div class="game-title">Jom Kira<br>Buah! 🍎</div>
-        <button class="btn-style" onclick="startGameSession()">MULA</button>
+        
+        <div class="btn-container">
+            <button class="btn-style" onclick="startGameSession('normal')">NORMAL (1-9)</button>
+            <button class="btn-style btn-hard" onclick="startGameSession('hard')">HARD (Rawak)</button>
+        </div>
     </div>
 
     <div id="game-container">
         <div class="header-bar">
-            <div class="yellow-tab">Counting</div>
-            <div class="level-badge" id="level-indicator">Lv 1/5</div>
+            <div class="yellow-tab" id="mode-title">Counting</div>
+            <div class="level-badge" id="level-indicator">1 / 9</div>
         </div>
 
         <div class="left-panel">
@@ -243,8 +260,12 @@
         let correctNum = 0;
         let isLocked = false;
         let countedFruits = 0;
-        let currentLevel = 1;
-        const maxLevels = 5;
+        
+        // --- LEVEL VARIABLES ---
+        let currentRound = 1;
+        const maxRounds = 9; // Setiap level ada 9 soalan
+        let gameMode = 'normal'; 
+        let questionSequence = []; // Menyimpan urutan soalan
 
         // --- SISTEM SUARA ---
         function speak(text) {
@@ -256,9 +277,39 @@
             }
         }
 
+        // --- PENGURUSAN SEQUENCE ---
+        function generateSequence(mode) {
+            // Asas nombor 1 hingga 9
+            let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            
+            if (mode === 'normal') {
+                // Normal: Ikut urutan
+                return nums;
+            } else {
+                // Hard: Rawakkan (Shuffle)
+                for (let i = nums.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [nums[i], nums[j]] = [nums[j], nums[i]];
+                }
+                return nums;
+            }
+        }
+
         // --- GAME LOGIC ---
-        function startGameSession() {
-            currentLevel = 1;
+        function startGameSession(selectedMode) {
+            gameMode = selectedMode;
+            currentRound = 1;
+            
+            // Jana soalan
+            questionSequence = generateSequence(gameMode);
+            
+            // UI Update
+            if(gameMode === 'normal') {
+                document.getElementById('mode-title').innerText = "Normal (1-9)";
+            } else {
+                document.getElementById('mode-title').innerText = "Hard (Rawak)";
+            }
+
             updateLevelDisplay();
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('win-screen').style.display = 'none';
@@ -267,9 +318,8 @@
             const gameContainer = document.getElementById('game-container');
             gameContainer.style.display = 'flex';
             
-            // Timeout sikit utk biar layout render dulu baru resize canvas
             setTimeout(() => { resizeCanvas(); initGame(); }, 100);
-            speak("Let's Play!");
+            speak(gameMode === 'normal' ? "Normal Mode" : "Hard Mode");
         }
 
         function goHome() {
@@ -283,7 +333,7 @@
 
         function showWinScreen() {
             document.getElementById('win-star').classList.remove('star-show');
-            speak("Congratulations!");
+            speak("Congratulations! You finished the level!");
             document.getElementById('game-container').style.display = 'none';
             const winScreen = document.getElementById('win-screen');
             winScreen.style.display = 'flex';
@@ -291,7 +341,8 @@
         }
 
         function updateLevelDisplay() {
-            document.getElementById('level-indicator').innerText = `Lv ${currentLevel}/${maxLevels}`;
+            // Papar Soalan ke berapa dari 9
+            document.getElementById('level-indicator').innerText = `Q ${currentRound}/${maxRounds}`;
         }
 
         function initGame() {
@@ -302,7 +353,10 @@
             clearCanvas();
             updateLevelDisplay();
             
-            correctNum = Math.floor(Math.random() * 9) + 1;
+            // Ambil nombor berdasarkan urutan sequence
+            // currentRound bermula dari 1, jadi array index ialah currentRound - 1
+            correctNum = questionSequence[currentRound - 1];
+
             let fruitType = fruitsData[Math.floor(Math.random() * fruitsData.length)];
             let container = document.getElementById('fruit-area');
             container.innerHTML = '';
@@ -328,15 +382,19 @@
                 document.getElementById('win-star').classList.add('star-show');
                 document.getElementById('status').innerText = "CORRECT!";
                 
-                // Draw Big Text
                 ctx.clearRect(0,0,canvas.width, canvas.height);
                 ctx.font = "bold 150px Nunito"; ctx.fillStyle = "white"; 
                 ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText(num, canvas.width/2, canvas.height/2);
                 
                 setTimeout(() => {
-                    if(currentLevel >= maxLevels) showWinScreen();
-                    else { currentLevel++; initGame(); }
+                    // Cek jika dah habis 9 soalan
+                    if(currentRound >= maxRounds) {
+                        showWinScreen();
+                    } else { 
+                        currentRound++; 
+                        initGame(); 
+                    }
                 }, 3000); 
             } else {
                 triggerWrong();
@@ -369,7 +427,6 @@
             }
         }
         window.addEventListener('resize', resizeCanvas);
-        // Special listener untuk detect orientation change di mobile
         window.addEventListener("orientationchange", function() {
             setTimeout(resizeCanvas, 200);
         });
@@ -409,10 +466,9 @@
             if(!isDrawing) return;
             if(e.type !== 'mouseup') e.preventDefault();
             isDrawing = false;
-            timer = setTimeout(recognizeGrid, 800); // 800ms delay supaya cepat sikit
+            timer = setTimeout(recognizeGrid, 800);
         }
 
-        // Event Listeners
         canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', endDraw);
         canvas.addEventListener('touchstart', startDraw, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); canvas.addEventListener('touchend', endDraw, { passive: false });
 
@@ -451,7 +507,7 @@
             for(let r=0; r<3; r++) {
                 for(let c=0; c<3; c++) {
                     let hits = 0;
-                    for(let k=0; k<15; k++) { // Kurangkan sampel utk lajukan di mobile
+                    for(let k=0; k<15; k++) {
                         const sx = Math.floor(minX + c*cellW + Math.random()*cellW);
                         const sy = Math.floor(minY + r*cellH + Math.random()*cellH);
                         if(imgData[(sy*w + sx)*4 + 3] > 50) hits++;
