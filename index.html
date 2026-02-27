@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jom Kira Buah - Pink Edition (2 Levels)</title>
+    <title>Jom Kira Buah - Pink Edition (Custom Audio)</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <style>
         /* --- ASAS & RESET --- */
@@ -29,7 +29,6 @@
             line-height: 1.1;
         }
 
-        /* Container untuk butang menu */
         .btn-container {
             display: flex;
             flex-direction: column;
@@ -52,7 +51,6 @@
         }
         .btn-style:active { transform: translateY(8px); box-shadow: none; }
 
-        /* Style Khas untuk butang Hard */
         .btn-hard {
             background-color: #C2185B;
             color: white;
@@ -100,7 +98,7 @@
             overflow-y: auto;
         }
         .fruit { 
-            font-size: clamp(40px, 8vw, 90px);
+            font-size: clamp(35px, 7vw, 85px); 
             cursor: pointer; transition: transform 0.1s; 
             filter: drop-shadow(2px 4px 0px rgba(0,0,0,0.1)); 
             user-select: none; -webkit-tap-highlight-color: transparent;
@@ -118,13 +116,14 @@
         .top-section { padding: 10px; padding-top: 60px; flex-shrink: 0; }
         
         .num-grid { 
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; 
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; 
             border: 2px solid #B3E5FC; padding: 5px; border-radius: 10px; 
         }
         .num-block { 
+            width: 22%; 
             aspect-ratio: 1; 
             background-color: white; color: #1976D2; 
-            font-size: clamp(18px, 2vw, 30px); font-weight: bold; 
+            font-size: clamp(16px, 2vw, 26px); font-weight: bold; 
             display: flex; align-items: center; justify-content: center; 
             border: 2px solid #E1F5FE; border-radius: 5px; cursor: pointer; 
         }
@@ -171,17 +170,12 @@
         @media (max-width: 768px) or (orientation: portrait) {
             #game-container { flex-direction: column; }
             
-            .left-panel { 
-                flex: none; height: 45%; width: 100%; 
-                border-right: none; 
-                border-bottom: 4px solid #C2185B; 
-            }
+            .left-panel { flex: none; height: 45%; width: 100%; border-right: none; border-bottom: 4px solid #C2185B; }
             .fruit-grid { margin-top: 50px; }
-            
             .right-panel { flex: 1; width: 100%; }
             
             .top-section { padding-top: 5px; padding-bottom: 5px; }
-            .num-block { height: 40px; font-size: 20px; }
+            .num-block { height: 35px; aspect-ratio: auto; font-size: 18px; } 
             
             .mid-toolbar { display: none; }
             
@@ -195,7 +189,6 @@
         }
 
         .mobile-clear-btn { display: none; }
-
     </style>
 </head>
 <body>
@@ -204,7 +197,7 @@
         <div class="game-title">Jom Kira<br>Buah! 🍎</div>
         
         <div class="btn-container">
-            <button class="btn-style" onclick="startGameSession('normal')">NORMAL (1-9)</button>
+            <button class="btn-style" onclick="startGameSession('normal')">NORMAL (1-10)</button>
             <button class="btn-style btn-hard" onclick="startGameSession('hard')">HARD (Rawak)</button>
         </div>
     </div>
@@ -212,7 +205,7 @@
     <div id="game-container">
         <div class="header-bar">
             <div class="yellow-tab" id="mode-title">Counting</div>
-            <div class="level-badge" id="level-indicator">1 / 9</div>
+            <div class="level-badge" id="level-indicator">1 / 10</div>
         </div>
 
         <div class="left-panel">
@@ -222,7 +215,6 @@
         <div class="right-panel" id="right-panel">
             <div class="top-section">
                 <div class="num-grid">
-                    <div class="num-block" onclick="checkAnswer(0)">0</div>
                     <div class="num-block" onclick="checkAnswer(1)">1</div>
                     <div class="num-block" onclick="checkAnswer(2)">2</div>
                     <div class="num-block" onclick="checkAnswer(3)">3</div>
@@ -232,6 +224,8 @@
                     <div class="num-block" onclick="checkAnswer(7)">7</div>
                     <div class="num-block" onclick="checkAnswer(8)">8</div>
                     <div class="num-block" onclick="checkAnswer(9)">9</div>
+                    <div class="num-block" onclick="checkAnswer(10)">10</div>
+                    <div class="num-block" onclick="checkAnswer(0)">0</div>
                 </div>
             </div>
 
@@ -256,37 +250,64 @@
     <div class="star-popup" id="win-star"><div class="star-shape">⭐</div></div>
 
     <script>
+        // --- CUSTOM AUDIO SETUP ---
+        const audioLinks = {
+            '1': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227603/1_dzl8do.mp4',
+            '2': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227600/2_qnjdhm.mp4',
+            '3': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227597/3_izlbsy.mp4',
+            '4': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227595/4_jkr6xn.mp4',
+            '5': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227595/5_jhbyoa.mp4',
+            '6': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227617/6_pv1ruj.mp4',
+            '7': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227615/7_k9pdtf.mp4',
+            '8': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227609/8_fefall.mp4',
+            '9': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227610/9_kff5f7.mp4',
+            '10': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227609/10_exnupg.mp4',
+            'goodjob': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227610/goodjob_i6xccd.mp4'
+        };
+
+        // Preload Audio untuk pastikan main tanpa sangkut
+        const audioObjects = {};
+        for (let key in audioLinks) {
+            audioObjects[key] = new Audio(audioLinks[key]);
+            audioObjects[key].preload = "auto";
+        }
+
+        function playCustomAudio(key) {
+            // Hentikan suara TTS sekiranya sedang berbunyi
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+            if (audioObjects[key]) {
+                // Mainkan Custom Audio MP4
+                audioObjects[key].pause();
+                audioObjects[key].currentTime = 0;
+                audioObjects[key].play().catch(e => console.log("Audio Error:", e));
+            } else {
+                // FALLBACK: Guna TTS untuk ayat yg tiada custom audio (contoh: "Try Again")
+                if ('speechSynthesis' in window) {
+                    const msg = new SpeechSynthesisUtterance(key.toString());
+                    msg.lang = 'en-US'; msg.rate = 0.9; msg.pitch = 1.1;
+                    window.speechSynthesis.speak(msg);
+                }
+            }
+        }
+
+        // --- VARIABLES ---
         const fruitsData = ['🍎', '🍊', '🍌', '🍓', '🍇', '🍉'];
         let correctNum = 0;
         let isLocked = false;
         let countedFruits = 0;
-        
-        // --- LEVEL VARIABLES ---
         let currentRound = 1;
-        const maxRounds = 9; // Setiap level ada 9 soalan
+        const maxRounds = 10;
         let gameMode = 'normal'; 
-        let questionSequence = []; // Menyimpan urutan soalan
+        let questionSequence = []; 
 
-        // --- SISTEM SUARA ---
-        function speak(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const msg = new SpeechSynthesisUtterance(text.toString());
-                msg.lang = 'en-US'; msg.rate = 0.9; msg.pitch = 1.1;
-                window.speechSynthesis.speak(msg);
-            }
-        }
-
-        // --- PENGURUSAN SEQUENCE ---
+        // --- PENGURUSAN SEQUENCE (1 HINGGA 10) ---
         function generateSequence(mode) {
-            // Asas nombor 1 hingga 9
-            let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
             
             if (mode === 'normal') {
-                // Normal: Ikut urutan
-                return nums;
+                return nums; 
             } else {
-                // Hard: Rawakkan (Shuffle)
                 for (let i = nums.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [nums[i], nums[j]] = [nums[j], nums[i]];
@@ -299,13 +320,10 @@
         function startGameSession(selectedMode) {
             gameMode = selectedMode;
             currentRound = 1;
-            
-            // Jana soalan
             questionSequence = generateSequence(gameMode);
             
-            // UI Update
             if(gameMode === 'normal') {
-                document.getElementById('mode-title').innerText = "Normal (1-9)";
+                document.getElementById('mode-title').innerText = "Normal (1-10)";
             } else {
                 document.getElementById('mode-title').innerText = "Hard (Rawak)";
             }
@@ -319,7 +337,9 @@
             gameContainer.style.display = 'flex';
             
             setTimeout(() => { resizeCanvas(); initGame(); }, 100);
-            speak(gameMode === 'normal' ? "Normal Mode" : "Hard Mode");
+            
+            // Audio mula game
+            playCustomAudio(gameMode === 'normal' ? "Normal Mode" : "Hard Mode");
         }
 
         function goHome() {
@@ -333,7 +353,7 @@
 
         function showWinScreen() {
             document.getElementById('win-star').classList.remove('star-show');
-            speak("Congratulations! You finished the level!");
+            playCustomAudio("Congratulations! You finished the level!");
             document.getElementById('game-container').style.display = 'none';
             const winScreen = document.getElementById('win-screen');
             winScreen.style.display = 'flex';
@@ -341,7 +361,6 @@
         }
 
         function updateLevelDisplay() {
-            // Papar Soalan ke berapa dari 9
             document.getElementById('level-indicator').innerText = `Q ${currentRound}/${maxRounds}`;
         }
 
@@ -353,8 +372,6 @@
             clearCanvas();
             updateLevelDisplay();
             
-            // Ambil nombor berdasarkan urutan sequence
-            // currentRound bermula dari 1, jadi array index ialah currentRound - 1
             correctNum = questionSequence[currentRound - 1];
 
             let fruitType = fruitsData[Math.floor(Math.random() * fruitsData.length)];
@@ -368,7 +385,9 @@
                     if(this.classList.contains('eaten')) return;
                     this.classList.add('eaten');
                     countedFruits++;
-                    speak(countedFruits);
+                    
+                    // --- MAINKAN CUSTOM AUDIO NOMBOR ---
+                    playCustomAudio(countedFruits.toString());
                 };
                 container.appendChild(f);
             }
@@ -378,7 +397,10 @@
             if(isLocked) return;
             if(num === correctNum) {
                 isLocked = true;
-                speak("Good Job!"); 
+                
+                // --- MAINKAN CUSTOM AUDIO GOODJOB ---
+                playCustomAudio('goodjob'); 
+                
                 document.getElementById('win-star').classList.add('star-show');
                 document.getElementById('status').innerText = "CORRECT!";
                 
@@ -388,7 +410,6 @@
                 ctx.fillText(num, canvas.width/2, canvas.height/2);
                 
                 setTimeout(() => {
-                    // Cek jika dah habis 9 soalan
                     if(currentRound >= maxRounds) {
                         showWinScreen();
                     } else { 
@@ -402,7 +423,7 @@
         }
 
         function triggerWrong() {
-            speak("Try Again");
+            playCustomAudio("Try Again");
             document.getElementById('status').innerText = "WRONG!";
             const panel = document.getElementById('right-panel');
             panel.classList.add('wrong-flash');
@@ -481,6 +502,33 @@
             '8': [1,1,1, 1,1,1, 1,1,1], '9': [1,1,1, 1,1,1, 0,0,1]
         };
 
+        function getDigitFromRegion(rx1, rx2, ry1, ry2, imgData, w) {
+            const cellW = (rx2-rx1)/3, cellH = (ry2-ry1)/3;
+            let grid = [0,0,0, 0,0,0, 0,0,0];
+
+            for(let r=0; r<3; r++) {
+                for(let c=0; c<3; c++) {
+                    let hits = 0;
+                    for(let k=0; k<20; k++) {
+                        const sx = Math.floor(rx1 + c*cellW + Math.random()*cellW);
+                        const sy = Math.floor(ry1 + r*cellH + Math.random()*cellH);
+                        if(imgData[(sy*w + sx)*4 + 3] > 50) hits++;
+                    }
+                    if(hits > 3) grid[r*3+c] = 1;
+                }
+            }
+
+            let bestNum = -1, maxScore = -1;
+            for(let n=0; n<=9; n++) {
+                let score = 0, pat = patterns[n.toString()];
+                if(n===1) { if(grid[1]&&grid[4]&&grid[7]&&!grid[0]) score=10; }
+                else if(n===0) { if(!grid[4]&&grid[0]&&grid[8]) score=10; }
+                else { for(let i=0; i<9; i++) if(grid[i]===pat[i]) score++; }
+                if(score > maxScore) { maxScore = score; bestNum = n; }
+            }
+            return bestNum;
+        }
+
         function recognizeGrid() {
             if(!hasWritten) return;
             const w = canvas.width, h = canvas.height;
@@ -501,32 +549,26 @@
             const pad = 10;
             minX = Math.max(0, minX-pad); minY = Math.max(0, minY-pad);
             maxX = Math.min(w, maxX+pad); maxY = Math.min(h, maxY+pad);
-            const cellW = (maxX-minX)/3, cellH = (maxY-minY)/3;
-            let grid = [0,0,0, 0,0,0, 0,0,0];
+            const bw = maxX - minX, bh = maxY - minY;
 
-            for(let r=0; r<3; r++) {
-                for(let c=0; c<3; c++) {
-                    let hits = 0;
-                    for(let k=0; k<15; k++) {
-                        const sx = Math.floor(minX + c*cellW + Math.random()*cellW);
-                        const sy = Math.floor(minY + r*cellH + Math.random()*cellH);
-                        if(imgData[(sy*w + sx)*4 + 3] > 50) hits++;
-                    }
-                    if(hits > 2) grid[r*3+c] = 1;
+            let detectedNum = -1;
+
+            if (bw > bh * 0.5) { 
+                let midX = minX + bw/2;
+                let leftDigit = getDigitFromRegion(minX, midX, minY, maxY, imgData, w);
+                let rightDigit = getDigitFromRegion(midX, maxX, minY, maxY, imgData, w);
+                
+                if (leftDigit === 1 && rightDigit === 0) {
+                    detectedNum = 10; 
+                } else {
+                    detectedNum = getDigitFromRegion(minX, maxX, minY, maxY, imgData, w);
                 }
-            }
-
-            let bestNum = -1, maxScore = -1;
-            for(let n=0; n<=9; n++) {
-                let score = 0, pat = patterns[n.toString()];
-                if(n===1) { if(grid[1]&&grid[4]&&grid[7]&&!grid[0]) score=10; }
-                else if(n===0) { if(!grid[4]&&grid[0]&&grid[8]) score=10; }
-                else { for(let i=0; i<9; i++) if(grid[i]===pat[i]) score++; }
-                if(score > maxScore) { maxScore = score; bestNum = n; }
+            } else {
+                detectedNum = getDigitFromRegion(minX, maxX, minY, maxY, imgData, w);
             }
             
-            document.getElementById('debug').innerText = "Scan: " + bestNum;
-            if(bestNum === correctNum) checkAnswer(correctNum);
+            document.getElementById('debug').innerText = "Scan: " + detectedNum;
+            if(detectedNum === correctNum) checkAnswer(correctNum);
             else triggerWrong();
         }
     </script>
