@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jom Kira Buah - Pink Edition (Custom Audio)</title>
+    <title>Jom Kira Buah - Nadhirah Faizan</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <style>
         /* --- ASAS & RESET --- */
@@ -59,6 +59,19 @@
         
         @keyframes bounceTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
+       
+        .footer-text {
+            position: absolute;
+            bottom: 20px;
+            right: 20px; 
+            color: rgb(14, 13, 13);
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+        }
+
         /* --- LAYOUT UTAMA --- */
         #game-container {
             display: none; 
@@ -88,14 +101,30 @@
         .left-panel { 
             flex: 65;
             background-color: #F48FB1; 
-            display: flex; align-items: center; justify-content: center; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
             position: relative; 
             border-right: 4px solid #C2185B; 
         }
+        
+        .panel-title-left {
+            position: absolute;
+            top: 70px;
+            background: transparent;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: clamp(16px, 3vw, 24px);
+            font-weight: 900;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            text-align: center;
+            z-index: 5;
+        }
+
         .fruit-grid { 
             display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
-            gap: 10px; width: 90%; height: 80%;
+            gap: 10px; width: 90%; height: 70%;
             overflow-y: auto;
+            margin-top: 50px;
         }
         .fruit { 
             font-size: clamp(35px, 7vw, 85px); 
@@ -106,7 +135,7 @@
         .fruit:active { transform: scale(0.8); }
         .eaten { opacity: 0.4; filter: grayscale(100%); transform: scale(0.8); }
 
-        /* --- PANEL KANAN (TULIS & NOMBOR) --- */
+        /* --- PANEL KANAN (PILIH & JAWAPAN) --- */
         .right-panel { 
             flex: 35;
             background-color: #FFFFFF; 
@@ -117,42 +146,67 @@
         
         .num-grid { 
             display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; 
-            border: 2px solid #B3E5FC; padding: 5px; border-radius: 10px; 
+            border: 2px solid #B3E5FC; padding: 10px; border-radius: 10px; 
         }
         .num-block { 
             width: 22%; 
             aspect-ratio: 1; 
             background-color: white; color: #1976D2; 
-            font-size: clamp(16px, 2vw, 26px); font-weight: bold; 
+            font-size: clamp(20px, 3vw, 30px); font-weight: bold; 
             display: flex; align-items: center; justify-content: center; 
-            border: 2px solid #E1F5FE; border-radius: 5px; cursor: pointer; 
+            border: 2px solid #E1F5FE; border-radius: 8px; 
+            cursor: grab;
+            transition: all 0.1s;
         }
-        .num-block:active { background-color: #BBDEFB; }
-
-        .mid-toolbar { display: flex; padding: 5px 10px; justify-content: flex-end; }
-        .icon-btn { 
-            border: 2px solid #E1F5FE; border-radius: 8px; width: 40px; height: 35px; 
-            display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; 
-        }
+        .num-block:active { cursor: grabbing; } 
+        .num-block.dragging { opacity: 0.5; transform: scale(0.9); } 
 
         .bottom-section { 
             flex: 1;
-            background-color: #C2185B; position: relative; 
-            overflow: hidden; border-top: 4px solid #C2185B; cursor: crosshair; 
+            background-color: #C2185B; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; 
+            border-top: 4px solid #C2185B;
         }
-        canvas { display: block; width: 100%; height: 100%; touch-action: none; position: absolute; z-index: 2; }
-        
-        .instruction-text { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 100%; text-align: center; color: rgba(255,255,255,0.4); 
-            font-size: 18px; pointer-events: none; z-index: 1; 
+
+        .panel-title-right {
+            background: transparent;
+            color: white;
+            padding: 8px 20px;
+            font-size: clamp(16px, 2vw, 22px);
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
         }
+
+        .answer-box {
+            width: 70%;
+            height: 120px;
+            border: 4px dashed rgba(255,255,255,0.6);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+        }
+        .answer-box.hover { border-color: white; background-color: rgba(255,255,255,0.2); color: white; } 
+        .answer-box.filled {
+            font-size: 80px;
+            color: white;
+            border-style: solid;
+            border-color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+
         .status-msg { 
             position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; 
             color: #FFF; font-weight: bold; pointer-events: none; 
             text-shadow: 1px 1px 2px black; z-index: 3; font-size: 20px; 
         }
-        .debug-msg { position: absolute; bottom: 2px; right: 2px; color: rgba(255,255,255,0.3); font-size: 10px; z-index: 3; pointer-events: none; }
 
         /* BINTANG & ANIMASI */
         .star-popup { 
@@ -169,26 +223,15 @@
         /* --- MEDIA QUERIES (RESPONSIVE RULES) --- */
         @media (max-width: 768px) or (orientation: portrait) {
             #game-container { flex-direction: column; }
-            
-            .left-panel { flex: none; height: 45%; width: 100%; border-right: none; border-bottom: 4px solid #C2185B; }
-            .fruit-grid { margin-top: 50px; }
+            .left-panel { flex: none; height: 50%; width: 100%; border-right: none; border-bottom: 4px solid #C2185B; }
+            .panel-title-left { top: 60px; }
+            .fruit-grid { margin-top: 20px; height: 65%; }
             .right-panel { flex: 1; width: 100%; }
-            
-            .top-section { padding-top: 5px; padding-bottom: 5px; }
-            .num-block { height: 35px; aspect-ratio: auto; font-size: 18px; } 
-            
-            .mid-toolbar { display: none; }
-            
-            .mobile-clear-btn {
-                display: block !important;
-                position: absolute; top: 10px; right: 10px; 
-                background: rgba(255,255,255,0.2); color: white;
-                border: 1px solid white; border-radius: 50%; width: 30px; height: 30px;
-                text-align: center; line-height: 28px; font-size: 16px; z-index: 10;
-            }
+            .top-section { padding-top: 10px; padding-bottom: 10px; }
+            .num-block { height: 45px; aspect-ratio: auto; font-size: 22px; } 
+            .answer-box { height: 80px; }
+            .answer-box.filled { font-size: 50px; }
         }
-
-        .mobile-clear-btn { display: none; }
     </style>
 </head>
 <body>
@@ -197,9 +240,11 @@
         <div class="game-title">Jom Kira<br>Buah! 🍎</div>
         
         <div class="btn-container">
-            <button class="btn-style" onclick="startGameSession('normal')">NORMAL (1-10)</button>
-            <button class="btn-style btn-hard" onclick="startGameSession('hard')">HARD (Rawak)</button>
+            <button class="btn-style" onclick="startGameSession('normal')">NORMAL</button>
+            <button class="btn-style btn-hard" onclick="startGameSession('hard')">HARD</button>
         </div>
+        
+        <div class="footer-text">NADHIRAH FAIZAN, 2026</div>
     </div>
 
     <div id="game-container">
@@ -209,35 +254,30 @@
         </div>
 
         <div class="left-panel">
+            <div class="panel-title-left">Tap on the fruits to count together !</div>
             <div class="fruit-grid" id="fruit-area"></div>
         </div>
 
         <div class="right-panel" id="right-panel">
             <div class="top-section">
                 <div class="num-grid">
-                    <div class="num-block" onclick="checkAnswer(1)">1</div>
-                    <div class="num-block" onclick="checkAnswer(2)">2</div>
-                    <div class="num-block" onclick="checkAnswer(3)">3</div>
-                    <div class="num-block" onclick="checkAnswer(4)">4</div>
-                    <div class="num-block" onclick="checkAnswer(5)">5</div>
-                    <div class="num-block" onclick="checkAnswer(6)">6</div>
-                    <div class="num-block" onclick="checkAnswer(7)">7</div>
-                    <div class="num-block" onclick="checkAnswer(8)">8</div>
-                    <div class="num-block" onclick="checkAnswer(9)">9</div>
-                    <div class="num-block" onclick="checkAnswer(10)">10</div>
-                    <div class="num-block" onclick="checkAnswer(0)">0</div>
+                    <div class="num-block" draggable="true">1</div>
+                    <div class="num-block" draggable="true">2</div>
+                    <div class="num-block" draggable="true">3</div>
+                    <div class="num-block" draggable="true">4</div>
+                    <div class="num-block" draggable="true">5</div>
+                    <div class="num-block" draggable="true">6</div>
+                    <div class="num-block" draggable="true">7</div>
+                    <div class="num-block" draggable="true">8</div>
+                    <div class="num-block" draggable="true">9</div>
+                    <div class="num-block" draggable="true">10</div>
                 </div>
             </div>
 
-            <div class="mid-toolbar"><div class="icon-btn" onclick="clearCanvas()">🗑️</div></div>
-
-            <div class="bottom-section" id="canvas-container">
-                <div class="instruction-text" id="hint">Tulis nombor</div>
-                <div class="mobile-clear-btn" onclick="clearCanvas()">✖</div>
-                
-                <canvas id="writeCanvas"></canvas>
+            <div class="bottom-section">
+                <div class="panel-title-right">How many fruits are there?</div>
+                <div class="answer-box" id="answer-box">Drag the number above into this box</div>
                 <div class="status-msg" id="status"></div>
-                <div class="debug-msg" id="debug"></div>
             </div>
         </div>
     </div>
@@ -262,10 +302,10 @@
             '8': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227609/8_fefall.mp4',
             '9': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227610/9_kff5f7.mp4',
             '10': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227609/10_exnupg.mp4',
-            'goodjob': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227610/goodjob_i6xccd.mp4'
+            'goodjob': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227610/goodjob_i6xccd.mp4',
+            'start': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772273138/tap_ivgdcu.mp4'
         };
 
-        // Preload Audio untuk pastikan main tanpa sangkut
         const audioObjects = {};
         for (let key in audioLinks) {
             audioObjects[key] = new Audio(audioLinks[key]);
@@ -273,16 +313,12 @@
         }
 
         function playCustomAudio(key) {
-            // Hentikan suara TTS sekiranya sedang berbunyi
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-
             if (audioObjects[key]) {
-                // Mainkan Custom Audio MP4
                 audioObjects[key].pause();
                 audioObjects[key].currentTime = 0;
                 audioObjects[key].play().catch(e => console.log("Audio Error:", e));
             } else {
-                // FALLBACK: Guna TTS untuk ayat yg tiada custom audio (contoh: "Try Again")
                 if ('speechSynthesis' in window) {
                     const msg = new SpeechSynthesisUtterance(key.toString());
                     msg.lang = 'en-US'; msg.rate = 0.9; msg.pitch = 1.1;
@@ -301,10 +337,8 @@
         let gameMode = 'normal'; 
         let questionSequence = []; 
 
-        // --- PENGURUSAN SEQUENCE (1 HINGGA 10) ---
         function generateSequence(mode) {
             let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-            
             if (mode === 'normal') {
                 return nums; 
             } else {
@@ -316,16 +350,15 @@
             }
         }
 
-        // --- GAME LOGIC ---
         function startGameSession(selectedMode) {
             gameMode = selectedMode;
             currentRound = 1;
             questionSequence = generateSequence(gameMode);
             
             if(gameMode === 'normal') {
-                document.getElementById('mode-title').innerText = "Normal (1-10)";
+                document.getElementById('mode-title').innerText = "Normal ";
             } else {
-                document.getElementById('mode-title').innerText = "Hard (Rawak)";
+                document.getElementById('mode-title').innerText = "Hard ";
             }
 
             updateLevelDisplay();
@@ -336,10 +369,8 @@
             const gameContainer = document.getElementById('game-container');
             gameContainer.style.display = 'flex';
             
-            setTimeout(() => { resizeCanvas(); initGame(); }, 100);
-            
-            // Audio mula game
-            playCustomAudio(gameMode === 'normal' ? "Normal Mode" : "Hard Mode");
+            setTimeout(() => { initGame(); }, 100);
+            playCustomAudio('start');
         }
 
         function goHome() {
@@ -369,7 +400,14 @@
             countedFruits = 0;
             document.getElementById('win-star').classList.remove('star-show');
             document.getElementById('right-panel').classList.remove('wrong-flash');
-            clearCanvas();
+            
+            // Reset kotak jawapan
+            const answerBox = document.getElementById('answer-box');
+            answerBox.innerText = "Drag the number above into this box";
+            answerBox.classList.remove('filled');
+            answerBox.classList.remove('hover');
+            document.getElementById('status').innerText = "";
+            
             updateLevelDisplay();
             
             correctNum = questionSequence[currentRound - 1];
@@ -385,29 +423,25 @@
                     if(this.classList.contains('eaten')) return;
                     this.classList.add('eaten');
                     countedFruits++;
-                    
-                    // --- MAINKAN CUSTOM AUDIO NOMBOR ---
                     playCustomAudio(countedFruits.toString());
                 };
                 container.appendChild(f);
             }
         }
 
+        // --- FUNGSI PILIH JAWAPAN ---
         function checkAnswer(num) {
             if(isLocked) return;
+            
+            const answerBox = document.getElementById('answer-box');
+            answerBox.innerText = num;
+            answerBox.classList.add('filled');
+            
             if(num === correctNum) {
                 isLocked = true;
-                
-                // --- MAINKAN CUSTOM AUDIO GOODJOB ---
                 playCustomAudio('goodjob'); 
-                
                 document.getElementById('win-star').classList.add('star-show');
                 document.getElementById('status').innerText = "CORRECT!";
-                
-                ctx.clearRect(0,0,canvas.width, canvas.height);
-                ctx.font = "bold 150px Nunito"; ctx.fillStyle = "white"; 
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                ctx.fillText(num, canvas.width/2, canvas.height/2);
                 
                 setTimeout(() => {
                     if(currentRound >= maxRounds) {
@@ -418,159 +452,94 @@
                     }
                 }, 3000); 
             } else {
-                triggerWrong();
+                playCustomAudio("Try Again");
+                document.getElementById('status').innerText = "WRONG!";
+                const panel = document.getElementById('right-panel');
+                panel.classList.add('wrong-flash');
+                
+                setTimeout(() => {
+                    panel.classList.remove('wrong-flash');
+                    document.getElementById('status').innerText = "";
+                    answerBox.innerText = "Tarik nombor";
+                    answerBox.classList.remove('filled');
+                }, 800);
             }
         }
 
-        function triggerWrong() {
-            playCustomAudio("Try Again");
-            document.getElementById('status').innerText = "WRONG!";
-            const panel = document.getElementById('right-panel');
-            panel.classList.add('wrong-flash');
-            setTimeout(() => {
-                panel.classList.remove('wrong-flash');
-                document.getElementById('status').innerText = "";
-                if(!isDrawing) clearCanvas();
-            }, 800);
-        }
+        // --- DRAG AND DROP LOGIC ---
+        const draggables = document.querySelectorAll('.num-block');
+        const dropZone = document.getElementById('answer-box');
 
-        // --- CANVAS ENGINE ---
-        const canvas = document.getElementById('writeCanvas');
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        const container = document.getElementById('canvas-container');
-        let isDrawing = false, timer = null, hasWritten = false;
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                if(isLocked) { e.preventDefault(); return; }
+                draggable.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', draggable.innerText);
+            });
 
-        function resizeCanvas() {
-            if(container.offsetWidth > 0) {
-                canvas.width = container.offsetWidth;
-                canvas.height = container.offsetHeight;
-                ctx.lineWidth = 18; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#FFFFFF';
-            }
-        }
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener("orientationchange", function() {
-            setTimeout(resizeCanvas, 200);
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+            });
+            
+            // Sokongan untuk Touch Events (Peranti Mudah Alih)
+            draggable.addEventListener('touchstart', (e) => {
+                if(isLocked) return;
+                draggable.dataset.isDragging = "true";
+                draggable.classList.add('dragging');
+                e.preventDefault(); 
+            }, {passive: false});
+            
+            draggable.addEventListener('touchmove', (e) => {
+                if(isLocked || draggable.dataset.isDragging !== "true") return;
+                
+                const touch = e.touches[0];
+                const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if(targetElement === dropZone) {
+                    dropZone.classList.add('hover');
+                } else {
+                    dropZone.classList.remove('hover');
+                }
+                e.preventDefault();
+            }, {passive: false});
+            
+            draggable.addEventListener('touchend', (e) => {
+                if(isLocked || draggable.dataset.isDragging !== "true") return;
+                draggable.dataset.isDragging = "false";
+                draggable.classList.remove('dragging');
+                dropZone.classList.remove('hover');
+                
+                const touch = e.changedTouches[0];
+                const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if(targetElement === dropZone) {
+                    const droppedNum = parseInt(draggable.innerText);
+                    checkAnswer(droppedNum);
+                }
+            });
         });
 
-        function clearCanvas() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            document.getElementById('hint').style.opacity = '1';
-            document.getElementById('status').innerText = "";
-            document.getElementById('debug').innerText = "";
-            hasWritten = false;
-        }
-
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            let cx = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-            let cy = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-            return { x: cx - rect.left, y: cy - rect.top };
-        }
-
-        function startDraw(e) {
+        dropZone.addEventListener('dragover', (e) => {
             if(isLocked) return;
-            if(e.type !== 'mousedown') e.preventDefault();
-            clearTimeout(timer);
-            document.getElementById('hint').style.opacity = '0';
-            document.getElementById('status').innerText = "";
-            isDrawing = true; hasWritten = true;
-            const pos = getPos(e);
-            ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
-        }
-        function draw(e) {
-            if(!isDrawing) return;
-            if(e.type !== 'mousemove') e.preventDefault();
-            const pos = getPos(e);
-            ctx.lineTo(pos.x, pos.y); ctx.stroke();
-        }
-        function endDraw(e) {
-            if(!isDrawing) return;
-            if(e.type !== 'mouseup') e.preventDefault();
-            isDrawing = false;
-            timer = setTimeout(recognizeGrid, 800);
-        }
+            e.preventDefault(); 
+            dropZone.classList.add('hover');
+        });
 
-        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', endDraw);
-        canvas.addEventListener('touchstart', startDraw, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); canvas.addEventListener('touchend', endDraw, { passive: false });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('hover');
+        });
 
-        // --- VISION PATTERN MATCHING ---
-        const patterns = {
-            '0': [1,1,1, 1,0,1, 1,1,1], '1': [0,1,0, 0,1,0, 0,1,0],
-            '2': [1,1,1, 0,1,1, 1,1,1], '3': [1,1,1, 0,1,1, 1,1,1],
-            '4': [1,0,1, 1,1,1, 0,0,1], '5': [1,1,1, 1,1,0, 1,1,1],
-            '6': [1,0,0, 1,1,1, 1,1,1], '7': [1,1,1, 0,0,1, 0,0,1],
-            '8': [1,1,1, 1,1,1, 1,1,1], '9': [1,1,1, 1,1,1, 0,0,1]
-        };
-
-        function getDigitFromRegion(rx1, rx2, ry1, ry2, imgData, w) {
-            const cellW = (rx2-rx1)/3, cellH = (ry2-ry1)/3;
-            let grid = [0,0,0, 0,0,0, 0,0,0];
-
-            for(let r=0; r<3; r++) {
-                for(let c=0; c<3; c++) {
-                    let hits = 0;
-                    for(let k=0; k<20; k++) {
-                        const sx = Math.floor(rx1 + c*cellW + Math.random()*cellW);
-                        const sy = Math.floor(ry1 + r*cellH + Math.random()*cellH);
-                        if(imgData[(sy*w + sx)*4 + 3] > 50) hits++;
-                    }
-                    if(hits > 3) grid[r*3+c] = 1;
-                }
-            }
-
-            let bestNum = -1, maxScore = -1;
-            for(let n=0; n<=9; n++) {
-                let score = 0, pat = patterns[n.toString()];
-                if(n===1) { if(grid[1]&&grid[4]&&grid[7]&&!grid[0]) score=10; }
-                else if(n===0) { if(!grid[4]&&grid[0]&&grid[8]) score=10; }
-                else { for(let i=0; i<9; i++) if(grid[i]===pat[i]) score++; }
-                if(score > maxScore) { maxScore = score; bestNum = n; }
-            }
-            return bestNum;
-        }
-
-        function recognizeGrid() {
-            if(!hasWritten) return;
-            const w = canvas.width, h = canvas.height;
-            const imgData = ctx.getImageData(0,0,w,h).data;
-            let minX=w, maxX=0, minY=h, maxY=0, found = false;
-
-            for(let y=0; y<h; y+=5) {
-                for(let x=0; x<w; x+=5) {
-                    if(imgData[(y*w + x)*4 + 3] > 0) {
-                        if(x<minX) minX=x; if(x>maxX) maxX=x;
-                        if(y<minY) minY=y; if(y>maxY) maxY=y;
-                        found = true;
-                    }
-                }
-            }
-            if(!found || (maxX-minX < 20)) { document.getElementById('status').innerText = "?"; return; }
-
-            const pad = 10;
-            minX = Math.max(0, minX-pad); minY = Math.max(0, minY-pad);
-            maxX = Math.min(w, maxX+pad); maxY = Math.min(h, maxY+pad);
-            const bw = maxX - minX, bh = maxY - minY;
-
-            let detectedNum = -1;
-
-            if (bw > bh * 0.5) { 
-                let midX = minX + bw/2;
-                let leftDigit = getDigitFromRegion(minX, midX, minY, maxY, imgData, w);
-                let rightDigit = getDigitFromRegion(midX, maxX, minY, maxY, imgData, w);
-                
-                if (leftDigit === 1 && rightDigit === 0) {
-                    detectedNum = 10; 
-                } else {
-                    detectedNum = getDigitFromRegion(minX, maxX, minY, maxY, imgData, w);
-                }
-            } else {
-                detectedNum = getDigitFromRegion(minX, maxX, minY, maxY, imgData, w);
-            }
+        dropZone.addEventListener('drop', (e) => {
+            if(isLocked) { e.preventDefault(); return; }
+            e.preventDefault();
+            dropZone.classList.remove('hover');
             
-            document.getElementById('debug').innerText = "Scan: " + detectedNum;
-            if(detectedNum === correctNum) checkAnswer(correctNum);
-            else triggerWrong();
-        }
+            const data = e.dataTransfer.getData('text/plain');
+            const droppedNum = parseInt(data);
+            
+            checkAnswer(droppedNum);
+        });
+
     </script>
 </body>
 </html>
