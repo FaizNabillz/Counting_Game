@@ -6,10 +6,10 @@
     <title>Jom Kira Buah - Nadhirah Faizan</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- ASAS & RESET --- */
+        
         body { margin: 0; background-color: #F48FB1; font-family: 'Nunito', sans-serif; height: 100vh; overflow: hidden; user-select: none; touch-action: none; }
         
-        /* --- START & WIN SCREEN (Overlay) --- */
+       
         .overlay-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #F48FB1;
@@ -97,7 +97,7 @@
             margin-right: 15px; pointer-events: auto;
         }
 
-        /* --- PANEL KIRI (BUAH) --- */
+    
         .left-panel { 
             flex: 65;
             background-color: #F48FB1; 
@@ -135,7 +135,7 @@
         .fruit:active { transform: scale(0.8); }
         .eaten { opacity: 0.4; filter: grayscale(100%); transform: scale(0.8); }
 
-        /* --- PANEL KANAN (PILIH & JAWAPAN) --- */
+        /* --- PANEL KANAN  --- */
         .right-panel { 
             flex: 35;
             background-color: #FFFFFF; 
@@ -208,7 +208,7 @@
             text-shadow: 1px 1px 2px black; z-index: 3; font-size: 20px; 
         }
 
-        /* BINTANG & ANIMASI */
+      
         .star-popup { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); 
             z-index: 9999; pointer-events: none; 
@@ -220,7 +220,6 @@
         .wrong-flash { animation: shake 0.5s; border: 5px solid red !important; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
 
-        /* --- MEDIA QUERIES (RESPONSIVE RULES) --- */
         @media (max-width: 768px) or (orientation: portrait) {
             #game-container { flex-direction: column; }
             .left-panel { flex: none; height: 50%; width: 100%; border-right: none; border-bottom: 4px solid #C2185B; }
@@ -290,7 +289,7 @@
     <div class="star-popup" id="win-star"><div class="star-shape">⭐</div></div>
 
     <script>
-        // --- CUSTOM AUDIO SETUP ---
+        // --- AUDIO ---
         const audioLinks = {
             '1': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227603/1_dzl8do.mp4',
             '2': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227600/2_qnjdhm.mp4',
@@ -401,7 +400,7 @@
             document.getElementById('win-star').classList.remove('star-show');
             document.getElementById('right-panel').classList.remove('wrong-flash');
             
-            // Reset kotak jawapan
+            // RESET JAWAPAN
             const answerBox = document.getElementById('answer-box');
             answerBox.innerText = "Drag the number above into this box";
             answerBox.classList.remove('filled');
@@ -429,7 +428,7 @@
             }
         }
 
-        // --- FUNGSI PILIH JAWAPAN ---
+        /* FUNGSI PILIH JAWAPAN */ 
         function checkAnswer(num) {
             if(isLocked) return;
             
@@ -460,13 +459,13 @@
                 setTimeout(() => {
                     panel.classList.remove('wrong-flash');
                     document.getElementById('status').innerText = "";
-                    answerBox.innerText = "Tarik nombor";
+                    answerBox.innerText = "Drag the number above into this box";
                     answerBox.classList.remove('filled');
                 }, 800);
             }
         }
 
-        // --- DRAG AND DROP LOGIC ---
+        // --- DRAG AND DROP ---
         const draggables = document.querySelectorAll('.num-block');
         const dropZone = document.getElementById('answer-box');
 
@@ -481,7 +480,6 @@
                 draggable.classList.remove('dragging');
             });
             
-            // Sokongan untuk Touch Events (Peranti Mudah Alih)
             draggable.addEventListener('touchstart', (e) => {
                 if(isLocked) return;
                 draggable.dataset.isDragging = "true";
