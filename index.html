@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jom Kira Buah - Nadhirah Faizan</title>
+    <title>Let's Count The Fruits - Nadhirah Faizan</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        
+       
         body { margin: 0; background-color: #F48FB1; font-family: 'Nunito', sans-serif; height: 100vh; overflow: hidden; user-select: none; touch-action: none; }
         
-       
+        
         .overlay-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #F48FB1;
@@ -23,7 +23,7 @@
             font-size: clamp(40px, 8vw, 80px);
             color: white; 
             text-shadow: 4px 4px 0px #C2185B; 
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             animation: bounceTitle 2s infinite;
             text-align: center;
             line-height: 1.1;
@@ -32,7 +32,7 @@
         .btn-container {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
         }
 
@@ -41,8 +41,8 @@
             color: #333;
             font-size: clamp(20px, 5vw, 30px);
             font-weight: 900;
-            padding: 15px 30px;
-            width: 280px;
+            padding: 12px 30px;
+            width: 320px;
             border-radius: 50px;
             border: none;
             cursor: pointer;
@@ -56,15 +56,21 @@
             color: white;
             box-shadow: 0 8px 0 #880E4F;
         }
+
+        .btn-level3 {
+            background-color: #4CAF50;
+            color: white;
+            box-shadow: 0 8px 0 #2E7D32;
+        }
         
         @keyframes bounceTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-       
+        /* TULISAN KECIL DI BAWAH KANAN */
         .footer-text {
             position: absolute;
             bottom: 20px;
             right: 20px; 
-            color: rgb(14, 13, 13);
+            color: rgb(7, 7, 7);
             font-size: 14px;
             font-weight: bold;
             letter-spacing: 1px;
@@ -97,7 +103,7 @@
             margin-right: 15px; pointer-events: auto;
         }
 
-    
+        /* --- PANEL KIRI (BUAH) --- */
         .left-panel { 
             flex: 65;
             background-color: #F48FB1; 
@@ -118,14 +124,29 @@
             text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
             text-align: center;
             z-index: 5;
+            pointer-events: none; 
         }
 
+        /* Teks peringatan di bawah buah (Level 1 & 2) */
+        .reminder-text {
+            color: white;
+            font-size: clamp(14px, 2.5vw, 20px);
+            font-weight: 900;
+            margin-top: 15px;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+            text-align: center;
+            display: none; 
+        }
+
+        
         .fruit-grid { 
             display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
-            gap: 10px; width: 90%; height: 70%;
+            gap: 10px; width: 90%; height: 60%;
             overflow-y: auto;
             margin-top: 50px;
+            position: relative;
         }
+
         .fruit { 
             font-size: clamp(35px, 7vw, 85px); 
             cursor: pointer; transition: transform 0.1s; 
@@ -134,8 +155,30 @@
         }
         .fruit:active { transform: scale(0.8); }
         .eaten { opacity: 0.4; filter: grayscale(100%); transform: scale(0.8); }
+        
+        
+        .level3-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 75%;
+            margin-top: 50px;
+        }
 
-        /* --- PANEL KANAN  --- */
+        .level3-wrapper {
+            position: relative;
+            display: inline-block; 
+        }
+
+        .level3-img {
+            max-width: 100%;
+            max-height: 60vh; 
+            display: block;
+            pointer-events: none;
+        }
+
+        /* --- PANEL KANAN (PILIH & JAWAP) --- */
         .right-panel { 
             flex: 35;
             background-color: #FFFFFF; 
@@ -181,14 +224,17 @@
         }
 
         .answer-box {
-            width: 70%;
+            width: 80%;
             height: 120px;
             border: 4px dashed rgba(255,255,255,0.6);
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            text-align: center;
+            font-size: clamp(14px, 2vw, 20px); 
+            padding: 10px;
+            box-sizing: border-box;
             font-weight: bold;
             color: rgba(255,255,255,0.7);
             transition: all 0.2s;
@@ -208,7 +254,7 @@
             text-shadow: 1px 1px 2px black; z-index: 3; font-size: 20px; 
         }
 
-      
+        /* BINTANG & ANIMASI */
         .star-popup { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); 
             z-index: 9999; pointer-events: none; 
@@ -220,16 +266,20 @@
         .wrong-flash { animation: shake 0.5s; border: 5px solid red !important; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
 
+        
         @media (max-width: 768px) or (orientation: portrait) {
             #game-container { flex-direction: column; }
             .left-panel { flex: none; height: 50%; width: 100%; border-right: none; border-bottom: 4px solid #C2185B; }
             .panel-title-left { top: 60px; }
-            .fruit-grid { margin-top: 20px; height: 65%; }
+            .fruit-grid { margin-top: 20px; height: 55%; }
+            .level3-container { height: 65%; margin-top: 60px; }
+            .level3-img { max-height: 35vh; }
             .right-panel { flex: 1; width: 100%; }
             .top-section { padding-top: 10px; padding-bottom: 10px; }
             .num-block { height: 45px; aspect-ratio: auto; font-size: 22px; } 
-            .answer-box { height: 80px; }
+            .answer-box { height: 80px; font-size: clamp(12px, 3vw, 16px); }
             .answer-box.filled { font-size: 50px; }
+            .reminder-text { margin-top: 5px; }
         }
     </style>
 </head>
@@ -239,8 +289,9 @@
         <div class="game-title">Let's Count The<br>Fruits! 🍎</div>
         
         <div class="btn-container">
-            <button class="btn-style" onclick="startGameSession('normal')">NORMAL</button>
-            <button class="btn-style btn-hard" onclick="startGameSession('hard')">HARD</button>
+            <button class="btn-style" onclick="startGameSession('normal')">LEVEL 1</button>
+            <button class="btn-style btn-hard" onclick="startGameSession('hard')">LEVEL 2</button>
+            <button class="btn-style btn-level3" onclick="startGameSession('level3')">LEVEL 3</button>
         </div>
         
         <div class="footer-text">NADHIRAH FAIZAN, 2026</div>
@@ -248,13 +299,21 @@
 
     <div id="game-container">
         <div class="header-bar">
-            <div class="yellow-tab" id="mode-title">Counting</div>
+            <div class="yellow-tab" id="mode-title">Level 1</div>
             <div class="level-badge" id="level-indicator">1 / 10</div>
         </div>
 
         <div class="left-panel">
-            <div class="panel-title-left">Tap on the fruits to count together !</div>
-            <div class="fruit-grid" id="fruit-area"></div>
+            <div class="panel-title-left" id="panel-title-left">Tap on the fruits to count together !</div>
+            
+            <div class="fruit-grid" id="fruit-area" style="display:none;"></div>
+            
+            <div class="reminder-text" id="reminder-text">don't forget to count together!</div>
+
+            <div class="level3-container" id="level3-area" style="display:none;">
+                <div class="level3-wrapper" id="level3-wrapper">
+                    </div>
+            </div>
         </div>
 
         <div class="right-panel" id="right-panel">
@@ -282,14 +341,14 @@
     </div>
 
     <div class="overlay-screen" id="win-screen" style="display: none; opacity: 0;">
-        <div class="game-title" style="font-size: clamp(40px, 8vw, 60px);">CONGRATS!<br>🎉🎉🎉</div>
+        <div class="game-title" style="font-size: clamp(40px, 8vw, 60px);">CONGRATSS!<br>🎉🎉🎉</div>
         <button class="btn-style" onclick="goHome()">MAIN MENU</button>
     </div>
 
     <div class="star-popup" id="win-star"><div class="star-shape">⭐</div></div>
 
     <script>
-        // --- AUDIO ---
+        // --- CUSTOM AUDIO SETUP ---
         const audioLinks = {
             '1': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227603/1_dzl8do.mp4',
             '2': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227600/2_qnjdhm.mp4',
@@ -302,7 +361,19 @@
             '9': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227610/9_kff5f7.mp4',
             '10': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227609/10_exnupg.mp4',
             'goodjob': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772227610/goodjob_i6xccd.mp4',
-            'start': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772273138/tap_ivgdcu.mp4'
+            'start': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772273138/tap_ivgdcu.mp4',
+            'count_reminder': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772535211/count_h9lirp.mp4',
+            // Audio Soalan Level 3
+            'q_apples': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772535512/apples_iy9hhs.mp4',
+            'q_oranges': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772535515/oranges_e3akni.mp4',
+            'q_corns': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772535512/corn_p9xjtx.mp4',
+            'q_strawberries': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772635000/straberry_iekwed.mp4',
+            'q_watermelons': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772535513/watermelon_o1ibkq.mp4',
+            'q_lunchbox': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772634164/lunchbox_ylfzcv.mp4',
+            'q_orange_hands': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772634163/orange_yjinsw.mp4',
+            'q_mangoes': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772634164/mango_fuql0t.mp4',
+            'q_greenapples': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772634166/greenapple_zffzmi.mp4',
+            'q_appletree7': 'https://res.cloudinary.com/dz2vizcjb/video/upload/v1772634162/appletree_hlexwp.mp4'
         };
 
         const audioObjects = {};
@@ -326,15 +397,80 @@
             }
         }
 
+        // --- LEVEL 3 (10 Pusingan) ---
+        const level3Scenarios = [
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772530335/apple-tree-full-red-apples-600nw-2534424191-removebg-preview_b85ql1.png',
+                correctNum: 9,
+                questionText: 'How many apples are on the tree?',
+                audioKey: 'q_apples'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772530259/cartoon-style-oranges-in-clear-glass-bowl-illustration-vector-removebg-preview_qpagwt.png',
+                correctNum: 8,
+                questionText: 'How many oranges are in the bowl?',
+                audioKey: 'q_oranges'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772532135/fruits-in-the-basket-cartoon-colored-clipart-free-vector-removebg-preview_yn3qlf.png',
+                correctNum: 2,
+                questionText: 'How many corns are in the basket?',
+                audioKey: 'q_corns'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772533451/photo_2026-03-03_18-22-39-removebg-preview_r8xlx4.png',
+                correctNum: 3,
+                questionText: 'How many strawberries are there?',
+                audioKey: 'q_strawberries'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772533440/photo_2026-03-03_18-22-32-removebg-preview_fgtptf.png',
+                correctNum: 1,
+                questionText: 'How many watermelons are on the plate?',
+                audioKey: 'q_watermelons'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772634001/photo_2026-03-04_22-16-45-removebg-preview_gcrguz.png',
+                correctNum: 3,
+                questionText: 'How many strawberries are in that lunch box?',
+                audioKey: 'q_lunchbox'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772634078/photo_2026-03-04_22-16-51_ff1ybu.jpg',
+                correctNum: 2,
+                questionText: 'How many oranges are in the girl’s hands?',
+                audioKey: 'q_orange_hands'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772633999/Screenshot_2026-03-04_221707-removebg-preview_f0nqdf.png',
+                correctNum: 1,
+                questionText: 'How many mangoes are on the ground?',
+                audioKey: 'q_mangoes'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772633995/photo_2026-03-04_22-17-42-removebg-preview_piuhzq.png',
+                correctNum: 10,
+                questionText: 'How many green apples are at the fruit stall?',
+                audioKey: 'q_greenapples'
+            },
+            {
+                bg: 'https://res.cloudinary.com/dz2vizcjb/image/upload/v1772633992/photo_2026-03-04_22-17-57-removebg-preview_srx6dx.png',
+                correctNum: 7,
+                questionText: 'How many apples are on the tree?',
+                audioKey: 'q_appletree7'
+            }
+        ];
+
         // --- VARIABLES ---
         const fruitsData = ['🍎', '🍊', '🍌', '🍓', '🍇', '🍉'];
         let correctNum = 0;
         let isLocked = false;
         let countedFruits = 0;
         let currentRound = 1;
-        const maxRounds = 10;
+        let maxRounds = 10;
         let gameMode = 'normal'; 
         let questionSequence = []; 
+        let level3Sequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; 
 
         function generateSequence(mode) {
             let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -352,12 +488,28 @@
         function startGameSession(selectedMode) {
             gameMode = selectedMode;
             currentRound = 1;
-            questionSequence = generateSequence(gameMode);
             
+            let panelTitle = document.getElementById('panel-title-left');
+
             if(gameMode === 'normal') {
-                document.getElementById('mode-title').innerText = "Normal ";
+                maxRounds = 10;
+                questionSequence = generateSequence('normal');
+                document.getElementById('mode-title').innerText = "Level 1";
+                panelTitle.style.display = 'block';
+                panelTitle.innerText = "Tap on the fruits to count together !";
+                playCustomAudio('start');
+            } else if(gameMode === 'hard') {
+                maxRounds = 10;
+                questionSequence = generateSequence('hard');
+                document.getElementById('mode-title').innerText = "Level 2";
+                panelTitle.style.display = 'block';
+                panelTitle.innerText = "Tap on the fruits to count together !";
+                playCustomAudio('start');
             } else {
-                document.getElementById('mode-title').innerText = "Hard ";
+               
+                maxRounds = 10; 
+                document.getElementById('mode-title').innerText = "Level 3";
+                panelTitle.style.display = 'block'; 
             }
 
             updateLevelDisplay();
@@ -369,7 +521,6 @@
             gameContainer.style.display = 'flex';
             
             setTimeout(() => { initGame(); }, 100);
-            playCustomAudio('start');
         }
 
         function goHome() {
@@ -400,7 +551,6 @@
             document.getElementById('win-star').classList.remove('star-show');
             document.getElementById('right-panel').classList.remove('wrong-flash');
             
-            // RESET JAWAPAN
             const answerBox = document.getElementById('answer-box');
             answerBox.innerText = "Drag the number above into this box";
             answerBox.classList.remove('filled');
@@ -408,27 +558,66 @@
             document.getElementById('status').innerText = "";
             
             updateLevelDisplay();
-            
-            correctNum = questionSequence[currentRound - 1];
 
-            let fruitType = fruitsData[Math.floor(Math.random() * fruitsData.length)];
-            let container = document.getElementById('fruit-area');
-            container.innerHTML = '';
-            for(let i=0; i<correctNum; i++) {
-                let f = document.createElement('div');
-                f.className = 'fruit';
-                f.textContent = fruitType;
-                f.onclick = function() {
-                    if(this.classList.contains('eaten')) return;
-                    this.classList.add('eaten');
-                    countedFruits++;
-                    playCustomAudio(countedFruits.toString());
-                };
-                container.appendChild(f);
+            let fruitArea = document.getElementById('fruit-area');
+            let level3Area = document.getElementById('level3-area');
+            let level3Wrapper = document.getElementById('level3-wrapper');
+            let panelTitle = document.getElementById('panel-title-left');
+            let reminderText = document.getElementById('reminder-text');
+
+            // Mainkan audio peringatan JIKA pusingan ke-5 
+            if (currentRound === 5 && gameMode !== 'level3') {
+                setTimeout(() => {
+                    playCustomAudio('count_reminder');
+                }, 400); 
+            }
+
+            // --- LOGIK LEVEL 3 (Gambar Sebenar) ---
+            if (gameMode === 'level3') {
+                fruitArea.style.display = 'none';
+                reminderText.style.display = 'none'; 
+                level3Area.style.display = 'flex';
+                level3Wrapper.innerHTML = ''; 
+                
+                let scenario = level3Scenarios[level3Sequence[currentRound - 1]];
+                correctNum = scenario.correctNum;
+                
+                
+                panelTitle.innerText = scenario.questionText;
+                setTimeout(() => { playCustomAudio(scenario.audioKey); }, 300);
+                
+                let img = document.createElement('img');
+                img.src = scenario.bg;
+                img.className = 'level3-img';
+                level3Wrapper.appendChild(img);
+                
+            } else {
+                // --- LOGIK NORMAL & HARD (Emoji Biasa) ---
+                panelTitle.innerText = "Tap on the fruits to count together !";
+                reminderText.style.display = 'block'; 
+                level3Area.style.display = 'none';
+                fruitArea.style.display = 'flex';
+                fruitArea.innerHTML = '';
+                
+                correctNum = questionSequence[currentRound - 1];
+                let fruitType = fruitsData[Math.floor(Math.random() * fruitsData.length)];
+                
+                for(let i=0; i<correctNum; i++) {
+                    let f = document.createElement('div');
+                    f.className = 'fruit';
+                    f.textContent = fruitType;
+                    f.onclick = function() {
+                        if(this.classList.contains('eaten')) return;
+                        this.classList.add('eaten');
+                        countedFruits++;
+                        playCustomAudio(countedFruits.toString());
+                    };
+                    fruitArea.appendChild(f);
+                }
             }
         }
 
-        /* FUNGSI PILIH JAWAPAN */ 
+        // --- FUNGSI SEMAK JAWAPAN ---
         function checkAnswer(num) {
             if(isLocked) return;
             
@@ -465,7 +654,7 @@
             }
         }
 
-        // --- DRAG AND DROP ---
+        // --- DRAG AND DROP LOGIC ---
         const draggables = document.querySelectorAll('.num-block');
         const dropZone = document.getElementById('answer-box');
 
@@ -479,6 +668,7 @@
             draggable.addEventListener('dragend', () => {
                 draggable.classList.remove('dragging');
             });
+            
             
             draggable.addEventListener('touchstart', (e) => {
                 if(isLocked) return;
